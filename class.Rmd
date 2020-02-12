@@ -1,0 +1,38 @@
+---
+title: "Class"
+author: "Cian Stryker"
+date: "2/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(reprex)
+library(tidyverse)
+```
+
+
+```{r}
+
+  
+class30 <- c(rep("M", 16), rep("F", 14))
+
+sample(class30)
+```
+
+```{r}
+
+x <- sample(class30, size = 30, replace = TRUE)
+  
+```
+
+```{r}
+x <- tibble(replicate = 1:1000) %>%
+  mutate(which_bowl = sample(c("Bowl 1", "Bowl 2"), size = 1000, replace = TRUE, prob = c(.1, .9))) %>%
+  mutate(cookie = if_else(which_bowl == "Bowl 1",
+    sample(c("Chocolate", "Vanilla"), size = 1000, replace = TRUE, prob = c(L_Ch1, L_V1)),
+    sample(c("Chocolate", "Vanilla"), size = 1000, replace = TRUE, prob = c(L_Ch2, L_V2))
+  ))
+```
+
