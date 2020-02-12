@@ -1,7 +1,7 @@
 ---
 title: "Class"
 author: "Cian Stryker"
-date: "2/12/2020"
+date: "2-12-2020"
 output: html_document
 ---
 
@@ -10,29 +10,38 @@ knitr::opts_chunk$set(echo = FALSE)
 
 library(reprex)
 library(tidyverse)
+library(fs)
+library(infer)
 ```
 
 
 ```{r}
+class30 <- tibble(c(rep("M", 16), rep("F", 14)), c(rep("2",4), rep("1",4),rep("3",4),rep("4",4),rep("5",4),rep("6",4),rep("7",4),rep("8",2)))
 
-  
-class30 <- c(rep("M", 16), rep("F", 14))
-
-sample(class30)
+reprex()
 ```
 
 ```{r}
+names(class30) <- c("Gender", "Table")
 
-x <- sample(class30, size = 30, replace = TRUE)
-  
+y <- class30 %>%
+rep_sample_n(size = 30, replace = TRUE, reps = 1000) %>%
+  group_by(replicate, Table) %>%
+  summarize(Males = sum(Gender == 'M'), Females = sum(Gender == 'F')) %>%
+  mutate(Single_gender_tables = ifelse(Males == 4 | Females == 4, "Yes", "No")) 
+
+table <-  y %>%
+  group_by(replicate) %>%
+  summarize(No_of_tables = sum(Single_gender_tables == 'Yes'))
+
+graph <- table %>%
+  ggplot(aes(x = No_of_tables)) +
+  geom_histogram() +
+  geom_vline(xintercept = 3)
+
 ```
 
 ```{r}
-x <- tibble(replicate = 1:1000) %>%
-  mutate(which_bowl = sample(c("Bowl 1", "Bowl 2"), size = 1000, replace = TRUE, prob = c(.1, .9))) %>%
-  mutate(cookie = if_else(which_bowl == "Bowl 1",
-    sample(c("Chocolate", "Vanilla"), size = 1000, replace = TRUE, prob = c(L_Ch1, L_V1)),
-    sample(c("Chocolate", "Vanilla"), size = 1000, replace = TRUE, prob = c(L_Ch2, L_V2))
-  ))
+graph
 ```
 
